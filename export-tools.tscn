@@ -29,8 +29,8 @@ glow_bloom = 0.18
 [sub_resource type="World3D" id="World3D_5uegb"]
 environment = SubResource("Environment_6x15w")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5uegb"]
-bg_color = Color(0.0876617, 0.058136, 0.117188, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4bw1r"]
+bg_color = Color(0.1092, 0.11752, 0.13, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_p5xux"]
 shader = ExtResource("2_0h0bt")
@@ -88,10 +88,10 @@ anchors_preset = 0
 offset_right = 4332.0
 offset_bottom = 3507.0
 script = ExtResource("1_ox0rb")
-bg_color = Color(0.0876617, 0.058136, 0.117188, 1)
+bg_color = Color(0.1092, 0.11752, 0.13, 1)
 font_color = Color(1, 0.960938, 0, 1)
 font_outline_color = Color(0, 0, 0, 1)
-bg_icon_color = Color(1, 0.83, 0.949, 0.0352941)
+bg_icon_color = Color(1, 0.83, 0.949, 0.0196078)
 icon_x_color = Color(1, 0.246094, 0.246094, 1)
 icon_x_outline_color = Color(0, 0, 0, 0.8)
 icon_o_color = Color(1, 0.960784, 0, 1)
@@ -152,11 +152,11 @@ offset_right = 75.0
 offset_bottom = 43.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="MainCapsuleIconPanel" type="Panel" parent="Steam/SteamPanel/MainCapsule/MainCapsuleViewport/MainCapsuleBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_p5xux")
 layout_mode = 1
 anchors_preset = 15
@@ -215,11 +215,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="SmallCapsuleIconPanel" type="Panel" parent="Steam/SteamPanel/SmallCapsule/SmallCapsuleViewport/SmallCapsuleBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_0h0bt")
 custom_minimum_size = Vector2(462, 300)
 layout_mode = 1
@@ -1015,11 +1015,11 @@ offset_right = 45.0
 offset_bottom = 29.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="HeaderCapsuleIconPanel" type="Panel" parent="Steam/SteamPanel/HeaderCapsule/HeaderCapsuleViewport/HeaderCapsuleBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_frqin")
 layout_mode = 1
 anchors_preset = 15
@@ -1809,11 +1809,11 @@ offset_right = 63.0
 offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="VerticalCapsuleIconPanel" type="Panel" parent="Steam/SteamPanel/VerticalCapsule/VerticalCapsuleViewport/VerticalCapsuleBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_gibah")
 layout_mode = 1
 anchors_preset = 15
@@ -2733,11 +2733,11 @@ offset_right = 63.0
 offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="PageBackgroundIconPanel" type="Panel" parent="Steam/SteamPanel/PageBackground/PageBackgroundViewport/PageBackgroundBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_gibah")
 layout_mode = 1
 anchors_preset = 15
@@ -2782,11 +2782,11 @@ offset_right = 63.0
 offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="LibraryCapsuleIconPanel" type="Panel" parent="Steam/SteamPanel/LibraryCapsule/LibraryCapsuleViewport/LibraryCapsuleBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_umucs")
 layout_mode = 1
 anchors_preset = 15
@@ -3713,11 +3713,11 @@ offset_right = 63.0
 offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="LibraryHeaderIconPanel" type="Panel" parent="Steam/SteamPanel/LibraryHeader/LibraryHeaderViewport/LibraryHeaderBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_umucs")
 layout_mode = 1
 anchors_preset = 15
@@ -4510,11 +4510,11 @@ offset_right = 63.0
 offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5uegb")
+theme_override_styles/panel = SubResource("StyleBoxFlat_4bw1r")
 
 [node name="LibraryHeroIconPanel" type="Panel" parent="Steam/SteamPanel/LibraryHero/LibraryHeroViewport/LibraryHeroBgPanel"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.83, 0.949, 0.0352941)
+self_modulate = Color(1, 0.83, 0.949, 0.0196078)
 material = SubResource("ShaderMaterial_is476")
 layout_mode = 1
 anchors_preset = 15

@@ -1,97 +1,76 @@
-@tool
 extends Control
-
-var svg_string = FileAccess.open("res://assets/icon.svg", FileAccess.READ).get_as_text()
+class_name SteamRenderTemplate
 
 const STEAM_NAMES: PackedStringArray = [
 	"library_logo", "main_capsule", "small_capsule",
 	"header_capsule", "vertical_capsule", "page_background",
-	"library_capsule", "library_header", "library_hero"
+	"library_capsule", "library_header", "library_hero",
 ]
 
-const LANGUAGES: PackedStringArray = [
-	"english", "arabic", "russian", "schinese", "tchinese",
-	"turkish", "danish",  "czech", "indonesian", "koreana", 
-	"finnish", "french",  "greek", "hungarian", "norwegian",
-	"italian", "german", "japanese","bulgarian", "romanian", 
-	"spanish", "polish", "thai", "brazilian", "portuguese",
-	"swedish", "latam",  "ukrainian", "vietnamese", "dutch"
-]
+const OVERRIDE_LAYER_NAME := "ConsumerOverrideLayer"
 
+var svg_string: String = ""
 var bg_stylebox: StyleBoxFlat = StyleBoxFlat.new()
 var texture: ImageTexture
+var _shared_logo: Texture2D
+var _apply_shared_logo_to_all: bool = false
+var _asset_overrides: Dictionary = {} # asset_id -> Texture2D
+var _language_index: int = 0
 
-@export_enum(
-	"English", "Arabic", "Russian", "Chinese (Simplified)", "Chinese (Traditional)",
-	"Turkish", "Danish",  "Czech", "Indonesian", "Korean", 
-	"Finnish", "French",  "Greek", "Hungarian", "Norwegian",
-	"Italian", "German", "Japanese","Bulgarian", "Romanian", 
-	"Spanish-Spain", "Polish", "Thai", "brazilian", "Portuguese",
-	"Swedish", "Spanish-Latin America",  "Ukrainian", "Vietnamese", "Dutch"
-) var lang: int = 0:
-	set(v):
-		lang = v
-		for steam_name: String in STEAM_NAMES:
-			var tabs: TabContainer = get("%s_tabs" % steam_name)
-			if tabs:
-				tabs.current_tab = lang
-
-@export_color_no_alpha var bg_color = Color(0.05, 0.083, 0.12):
+var bg_color: Color = Color(0.1092, 0.11752, 0.13, 1):
 	set(v):
 		bg_color = Color(v)
 		bg_stylebox.bg_color = bg_color
 
-@export var font_color: Color = Color(0.655, 0.812, 0.031):
+var font_color: Color = Color(1, 0.960938, 0, 1):
 	set(v):
 		font_color = v
 		ProjectSettings.set_setting("gui/theme/custom_font_color", font_color)
 
-@export var font_outline_color: Color = Color(0.066, 0.093, 0.001):
+var font_outline_color: Color = Color(0, 0, 0, 1):
 	set(v):
 		font_outline_color = v
 		ProjectSettings.set_setting("gui/theme/font_outline_color", font_outline_color)
 
-@export var bg_icon_color: Color = Color(1, 1, 1, 0.2):
+var bg_icon_color: Color = Color(1, 0.83, 0.949, 0.0196078):
 	set(v):
 		bg_icon_color = v
 		update_bg_icon_color()
 
-@export var icon_x_color: Color = Color(0.655, 0.812, 0.031):
+var icon_x_color: Color = Color(1, 0.246094, 0.246094, 1):
 	set(v):
 		icon_x_color = v
 		update_icon_colors()
 
-@export var icon_x_outline_color: Color = Color(0.066, 0.093, 0.001):
+var icon_x_outline_color: Color = Color(0, 0, 0, 0.8):
 	set(v):
 		icon_x_outline_color = v
 		update_icon_colors()
 
-@export var icon_o_color: Color = Color(0.655, 0.812, 0.031):
+var icon_o_color: Color = Color(1, 0.960784, 0, 1):
 	set(v):
 		icon_o_color = v
 		update_icon_colors()
 
-@export var icon_o_outline_color: Color = Color(0.066, 0.093, 0.001):
+var icon_o_outline_color: Color = Color(0, 0, 0, 0.780392):
 	set(v):
 		icon_o_outline_color = v
 		update_icon_colors()
 
-@export_range(0.0, 64.0) var font_outline_size: float = 16:
+var font_outline_size: float = 16.0:
 	set(v):
 		font_outline_size = v
 		ProjectSettings.set_setting("gui/theme/font_outline_size", font_outline_size)
 
-@export_range(0.0, 64.0) var icon_x_outline_size: float = 4.0:
+var icon_x_outline_size: float = 10.0:
 	set(v):
 		icon_x_outline_size = v
 		update_icon_colors()
 
-@export_range(0.0, 64.0) var icon_o_outline_size: float = 4.0:
+var icon_o_outline_size: float = 10.0:
 	set(v):
 		icon_o_outline_size = v
 		update_icon_colors()
-
-@export_tool_button("Export") var export_images = export_callback
 
 @onready var library_logo_viewport: SubViewport = get_node("%LibraryLogoViewport")
 @onready var main_capsule_viewport: SubViewport = get_node("%MainCapsuleViewport")
@@ -128,84 +107,197 @@ var texture: ImageTexture
 @onready var library_header_icon_panel: Panel = get_node("%LibraryHeaderIconPanel")
 @onready var library_hero_icon_panel: Panel = get_node("%LibraryHeroIconPanel")
 
-@onready var main_capsule_icon: IconRect = get_node("%MainCapsuleIcon")
-@onready var small_capsule_icon: IconRect = get_node("%SmallCapsuleIcon")
-@onready var header_capsule_icon: IconRect = get_node("%HeaderCapsuleIcon")
-@onready var vertical_capsule_icon: IconRect = get_node("%VerticalCapsuleIcon")
-@onready var library_capsule_icon: IconRect = get_node("%LibraryCapsuleIcon")
-@onready var library_header_icon: IconRect = get_node("%LibraryHeaderIcon")
-@onready var library_logo_icon: IconRect = get_node("%LibraryLogoIcon")
+@onready var main_capsule_icon: TextureRect = get_node("%MainCapsuleIcon")
+@onready var small_capsule_icon: TextureRect = get_node("%SmallCapsuleIcon")
+@onready var header_capsule_icon: TextureRect = get_node("%HeaderCapsuleIcon")
+@onready var vertical_capsule_icon: TextureRect = get_node("%VerticalCapsuleIcon")
+@onready var library_capsule_icon: TextureRect = get_node("%LibraryCapsuleIcon")
+@onready var library_header_icon: TextureRect = get_node("%LibraryHeaderIcon")
+@onready var library_logo_icon: TextureRect = get_node("%LibraryLogoIcon")
 
 
-func _validate_property(property: Dictionary) -> void:
-	if property["name"] == "texture":
-		property["usage"] = PROPERTY_USAGE_NONE
+func _init() -> void:
+	bg_stylebox.bg_color = bg_color
+	var file := FileAccess.open("res://assets/icon.svg", FileAccess.READ)
+	if file:
+		svg_string = file.get_as_text()
+	update_icon_colors()
 
 
 func _ready() -> void:
+	_hide_developer_chrome()
 	for steam_name: String in STEAM_NAMES:
 		var bg_panel: Panel = get("%s_bg_panel" % steam_name)
 		if bg_panel:
 			bg_panel.add_theme_stylebox_override("panel", bg_stylebox)
-		var icon: IconRect = get("%s_icon" % steam_name)
-		if icon:
-			icon.texture = texture
-	update_icon_colors()
+		var vp: SubViewport = get("%s_viewport" % steam_name)
+		if vp:
+			vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		_ensure_override_layer(steam_name)
+	_refresh_icons()
 	update_bg_icon_color()
 	ProjectSettings.set_setting("gui/theme/custom_font_color", font_color)
 	ProjectSettings.set_setting("gui/theme/font_outline_color", font_outline_color)
 	ProjectSettings.set_setting("gui/theme/font_outline_size", font_outline_size)
+	set_language_index(_language_index)
 
 
-func update_icon_colors():
+func _hide_developer_chrome() -> void:
+	# Keep the developer board off-screen so SubViewportContainers stay in a
+	# live tree (required for reliable viewport updates) without cluttering UI.
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	custom_minimum_size = Vector2.ZERO
+	size = Vector2.ZERO
+	position = Vector2(-100000, -100000)
+	var steam_label := get_node_or_null("Steam/SteamPanel/SteamLabel")
+	if steam_label is CanvasItem:
+		(steam_label as CanvasItem).visible = false
+	var steam_panel := get_node_or_null("Steam/SteamPanel")
+	if steam_panel is Panel:
+		(steam_panel as Panel).add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+
+
+func get_viewport_for_asset(asset_id: String) -> SubViewport:
+	return get("%s_viewport" % asset_id) as SubViewport
+
+
+func set_language_index(index: int) -> void:
+	_language_index = maxi(index, 0)
+	for steam_name: String in STEAM_NAMES:
+		var tabs: TabContainer = get("%s_tabs" % steam_name)
+		if tabs:
+			tabs.current_tab = mini(_language_index, tabs.get_tab_count() - 1)
+
+
+func apply_branding(state: ProjectState) -> void:
+	bg_color = state.bg_color
+	font_color = state.font_color
+	font_outline_color = state.font_outline_color
+	bg_icon_color = state.bg_icon_color
+	icon_x_color = state.icon_x_color
+	icon_x_outline_color = state.icon_x_outline_color
+	icon_o_color = state.icon_o_color
+	icon_o_outline_color = state.icon_o_outline_color
+	font_outline_size = state.font_outline_size
+	icon_x_outline_size = state.icon_x_outline_size
+	icon_o_outline_size = state.icon_o_outline_size
+	set_language_index(state.language_index)
+
+
+func set_shared_logo(tex: Texture2D, apply_to_all: bool) -> void:
+	_shared_logo = tex
+	_apply_shared_logo_to_all = apply_to_all
+	_refresh_icons()
+
+
+func set_asset_override(asset_id: String, tex: Texture2D) -> void:
+	if tex == null:
+		_asset_overrides.erase(asset_id)
+	else:
+		_asset_overrides[asset_id] = tex
+	_apply_override_layer(asset_id)
+
+
+func clear_asset_override(asset_id: String) -> void:
+	_asset_overrides.erase(asset_id)
+	_apply_override_layer(asset_id)
+
+
+func sync_overrides_from_state(state: ProjectState) -> void:
+	_asset_overrides.clear()
+	for asset_id in state.asset_override_paths.keys():
+		var path: String = str(state.asset_override_paths[asset_id])
+		var tex := ImageLoader.load_texture(path)
+		if tex:
+			_asset_overrides[asset_id] = tex
+	var shared := ImageLoader.load_texture(state.shared_logo_path)
+	set_shared_logo(shared, state.apply_shared_logo_to_all)
+	for steam_name: String in STEAM_NAMES:
+		_apply_override_layer(steam_name)
+
+
+func update_icon_colors() -> void:
+	if svg_string.is_empty():
+		return
 	var svg_str: String = svg_string
 	svg_str = svg_str.replace("#fff", "#%s" % icon_x_color.to_html(false))
 	svg_str = svg_str.replace("#000", "#%s" % icon_x_outline_color.to_html(false))
 	svg_str = svg_str.replace("red", "#%s" % icon_o_color.to_html(false))
 	svg_str = svg_str.replace("#00f", "#%s" % icon_o_outline_color.to_html(false))
-	svg_str = svg_str.replace("stroke-width:4", "stroke-width:%s;stroke-opacity:%s;fill-opacity:%s" % [icon_x_outline_size, icon_x_outline_color.a, icon_x_color.a])
-	svg_str = svg_str.replace("stroke-width:6", "stroke-width:%s;stroke-opacity:%s;fill-opacity:%s" % [icon_o_outline_size, icon_o_outline_color.a, icon_o_color.a])
+	svg_str = svg_str.replace(
+		"stroke-width:4",
+		"stroke-width:%s;stroke-opacity:%s;fill-opacity:%s" % [
+			icon_x_outline_size, icon_x_outline_color.a, icon_x_color.a
+		]
+	)
+	svg_str = svg_str.replace(
+		"stroke-width:6",
+		"stroke-width:%s;stroke-opacity:%s;fill-opacity:%s" % [
+			icon_o_outline_size, icon_o_outline_color.a, icon_o_color.a
+		]
+	)
 	var img: Image = Image.new()
 	img.load_svg_from_string(svg_str, 6)
-	if not texture or not texture.get_image():
+	if texture == null or texture.get_image() == null:
 		texture = ImageTexture.create_from_image(img)
 	else:
 		texture.update(img)
+	_refresh_icons()
 
 
-func update_bg_icon_color():
+func update_bg_icon_color() -> void:
 	for steam_name: String in STEAM_NAMES:
 		var icon_panel: Panel = get("%s_icon_panel" % steam_name)
 		if icon_panel:
 			icon_panel.self_modulate = bg_icon_color
 
 
-func _init() -> void:
-	bg_stylebox.bg_color = bg_color
-	update_icon_colors()
-
-func export_callback():
-	if not DirAccess.dir_exists_absolute("res://exported"):
-		DirAccess.make_dir_absolute("res://exported")
-		var gdignore_file = FileAccess.open("res://exported/.gdignore", FileAccess.WRITE)
-		gdignore_file.close()
-	if not DirAccess.dir_exists_absolute("res://exported/steam"):
-		DirAccess.make_dir_absolute("res://exported/steam")
+func _refresh_icons() -> void:
 	for steam_name: String in STEAM_NAMES:
-		var vp: SubViewport = get("%s_viewport" % steam_name)
-		if not vp:
+		var icon: TextureRect = get("%s_icon" % steam_name)
+		if icon == null:
 			continue
-		var tabs: TabContainer = get("%s_tabs" % steam_name)
-		var _name: String = vp.get_parent().name.to_snake_case()
-		if tabs:
-			for i in LANGUAGES.size():
-				var lang_name: String = LANGUAGES[i]
-				tabs.current_tab = i
-				await RenderingServer.frame_post_draw
-				var image: Image = vp.get_texture().get_image()
-				image.save_png("res://exported/steam/%s_%s.png" % [_name, lang_name.to_lower()])
+		if _apply_shared_logo_to_all and _shared_logo:
+			icon.texture = _shared_logo
+		elif _shared_logo and steam_name == "library_logo":
+			icon.texture = _shared_logo
 		else:
-			await RenderingServer.frame_post_draw
-			var image: Image = vp.get_texture().get_image()
-			image.save_png("res://exported/steam/%s.png" % _name)
-	EditorInterface.get_resource_filesystem().scan()
+			icon.texture = texture
+
+
+func _ensure_override_layer(asset_id: String) -> TextureRect:
+	var host: Node = get("%s_bg_panel" % asset_id)
+	if host == null:
+		host = get_viewport_for_asset(asset_id)
+	if host == null:
+		return null
+	var existing := host.get_node_or_null(OVERRIDE_LAYER_NAME)
+	if existing is TextureRect:
+		return existing
+	var layer := TextureRect.new()
+	layer.name = OVERRIDE_LAYER_NAME
+	if host is Control:
+		layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	else:
+		var vp := host as SubViewport
+		layer.size = Vector2(vp.size)
+		layer.position = Vector2.ZERO
+	layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	layer.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.visible = false
+	layer.z_index = 100
+	host.add_child(layer)
+	return layer
+
+
+func _apply_override_layer(asset_id: String) -> void:
+	var layer := _ensure_override_layer(asset_id)
+	if layer == null:
+		return
+	if _asset_overrides.has(asset_id):
+		layer.texture = _asset_overrides[asset_id]
+		layer.visible = true
+	else:
+		layer.texture = null
+		layer.visible = false
